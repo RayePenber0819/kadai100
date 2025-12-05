@@ -12,3 +12,6 @@ ruby webrick.rb
 ダメな例
 https://qiita.com/DaichiSaito/items/52448ebfcb0db768dcf3
 
+
+■幸せになれるかも　webとは何かを理解するクックパッド
+https://speakerdeck.com/osa/introduction-to-the-internet
