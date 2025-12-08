@@ -53,30 +53,3 @@ Chromeで右クリックメニューから「ソースの表示」を見ると�
 
 ![alt text](image-1.png)
 
-追記
-```
- WEBrick::HTTPServlet::FileHandler.add_handler("erb", WEBrick::HTTPServlet::ERBHandler)
- server.config[:MimeTypes]["erb"] = "text/html"
-
- server.mount_proc("/hello") do |req, res|
-   template = ERB.new( File.read('hello.erb') )
-   @now = Time.new
-   res.body << template.result( binding )
- end
-```
-
-作成
-```
-<html>
-<head><meta charset='utf-8'></head>
-<body>
-<h1>hello.erb</h1>
-<p>これはerbファイルです</p>
-<p>webrick.rbにHTMLを書くのは可読性, 保守性が著しく低くなります。</p>
-<p>その問題を解決するためにHTMLを書く専用のファイルを用意します。</p>
-
-<h2>現在時刻: <%= @now %></h2>
-</body>
-</html>
-```
-
