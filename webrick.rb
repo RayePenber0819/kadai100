@@ -28,6 +28,22 @@ server.mount_proc("/hello") do |req, res|
   res.body << template.result( binding )
 end
 
+server.mount_proc("/form_get") do |req, res|
+  template = ERB.new( File.read('form_get.erb') )
+  @params = req.query
+  @username = req.query["username"]
+  @age = req.query["age"]
+  res.body = template.result( binding )
+end
+
+server.mount_proc("/form_post") do |req, res|
+  template = ERB.new( File.read('form_post.erb') )
+  @params = req.query
+  @username = req.query["username"]
+  @age = req.query["age"]
+  res.body = template.result( binding )
+end
+
 trap(:INT){
     server.shutdown
 }
