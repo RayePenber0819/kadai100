@@ -44,6 +44,18 @@ server.mount_proc("/form_post") do |req, res|
   res.body = template.result( binding )
 end
 
+server.mount_proc("/foods") do |req, res|
+  foods = req.query["foods"]
+  if foods == "fruits"
+    template = ERB.new( File.read('foods_fruits.erb') )
+  elsif foods == "vegetables"
+    template = ERB.new( File.read('foods_vegetables.erb') )
+  else
+    template = ERB.new( File.read('foods_all.erb') )
+  end
+  res.body = template.result( binding )
+end
+
 trap(:INT){
     server.shutdown
 }
