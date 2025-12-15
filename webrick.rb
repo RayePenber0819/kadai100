@@ -21,6 +21,7 @@ require "erb" # erbをrequireする記述が必要
 # erb を使うにはこういった記述が必要。理解する必要はありません。このまま使いましょう。
 WEBrick::HTTPServlet::FileHandler.add_handler("erb", WEBrick::HTTPServlet::ERBHandler)
 server.config[:MimeTypes]["erb"] = "text/html"
+
 server.mount_proc("/hello") do |req, res|
   template = ERB.new( File.read('hello.erb') )
   # 現在時刻についてはインスタンス変数をここで定義してみるといいかも？
@@ -41,6 +42,49 @@ server.mount_proc("/form_post") do |req, res|
   @params = req.query
   @username = req.query["username"]
   @age = req.query["age"]
+  res.body = template.result( binding )
+end
+
+# server.mount_proc("/foods") do |req, res|
+#   foods = req.query["foods"]
+#   if foods == "fruits"
+#     template = ERB.new( File.read('foods_fruits.erb') )
+#   elsif foods == "vegetables"
+#     template = ERB.new( File.read('foods_vegetables.erb') )
+#   else
+#     template = ERB.new( File.read('foods_all.erb') )
+#   end
+#   res.body = template.result( binding )
+# end
+
+foods = [
+  { id: 1, name: "りんご", category: "fruits", price: "100" },
+  { id: 2, name: "バナナ", category: "fruits", price: "100" },
+  { id: 3, name: "いちご", category: "fruits", price: "120" },
+  { id: 4, name: "トマト", category: "vegetables", price: "120" },
+  { id: 5, name: "キャベツ", category: "vegetables", price: "150" },
+  { id: 6, name: "レタス", category: "vegetables", price: "150" },
+]
+
+server.mount_proc("/foods") do |req, res|
+  template = ERB.new( File.read('foods/index.erb') )
+  category = req.query["category_selected"]
+  pricemin = req.query["pricemin_selected"]
+  pricemax = req.query["pricemax_selected"]
+  @foods = foods
+  if category && category != "all"
+    @foods = @foods.select { |food| food[:category] == category }
+  end
+
+  if pricemin && !pricemin.empty?
+    pricemin_i = pricemin.to_i
+    @foods = @foods.select { |food| food[:price].to_i >= pricemin_i }
+  end
+
+  if pricemax && !pricemax.empty?
+    pricemax_i = pricemax.to_i
+    @foods = @foods.select { |food| food[:price].to_i <= pricemax_i }
+  end
   res.body = template.result( binding )
 end
 

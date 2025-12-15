@@ -1,0 +1,22 @@
+<head>
+    <meta charset="UTF-8">
+</head>
+<h1>
+    Foods一覧
+</h1>
+<form action="/foods" method="get">
+    <select name="category_selected">
+        <option value="all" selected>全て</option>
+        <option value="fruits">フルーツ</option>
+        <option value="vegetables">野菜</option>
+    </select>
+    <input type="number" name="pricemin_selected">円～
+    <input type="number" name="pricemax_selected" />円
+    <button type="submit" id="search" name="search">検索</button>
+</form>
+
+<ul>
+    <% @foods.each do |food| %>
+        <li><%= food[:name] %>-<%= food[:price] %>円</li>
+    <% end %>
+</ul>
