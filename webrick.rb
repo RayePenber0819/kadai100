@@ -69,13 +69,19 @@ foods = [
 server.mount_proc("/foods") do |req, res|
   template = ERB.new( File.read('foods/index.erb') )
   category = req.query["category_selected"]
-  price = req.query["price_selected"]
+  pricemin = req.query["pricemin_selected"]
+  pricemax = req.query["pricemax_selected"]
   @foods = foods
   if category && category != "all"
     @foods = @foods.select { |food| food[:category] == category }
   end
-  if price && price != "all"
-    @foods = @foods.select { |food| food[:price] == price }
+
+  if pricemin && pricemin != "all"
+    @foods = @foods.select { |food| food[:price] >= pricemin }
+  end
+
+  if pricemax && pricemax != "all"
+    @foods = @foods.select { |food| food[:price] <= pricemax }
   end
   res.body = template.result( binding )
 end
