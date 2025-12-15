@@ -58,31 +58,24 @@ end
 # end
 
 foods = [
-  { id: 1, name: "りんご", category: "fruits", price: "124" },
-  { id: 2, name: "バナナ", category: "fruits", price: "98" },
-  { id: 3, name: "いちご", category: "fruits", price: "55" },
-  { id: 4, name: "トマト", category: "vegetables", price: "68" },
-  { id: 5, name: "キャベツ", category: "vegetables", price: "120" },
-  { id: 6, name: "レタス", category: "vegetables", price: "118" },
+  { id: 1, name: "りんご", category: "fruits", price: "100" },
+  { id: 2, name: "バナナ", category: "fruits", price: "100" },
+  { id: 3, name: "いちご", category: "fruits", price: "120" },
+  { id: 4, name: "トマト", category: "vegetables", price: "120" },
+  { id: 5, name: "キャベツ", category: "vegetables", price: "150" },
+  { id: 6, name: "レタス", category: "vegetables", price: "150" },
 ]
 
 server.mount_proc("/foods") do |req, res|
   template = ERB.new( File.read('foods/index.erb') )
-  category = req.query["category_select"]
-  price = req.query["price"]
-  # if category.nil?
-  #   @foods = foods[0..5]
-  # elsif category == fruits
-  #   @foods = foods[0..2]
-  # elsif category == vegetables
-  #   @foods = foods[3..5]
-  # elsif category == all
-  #   @foods = foods[0..5]
-  # end
-  if category.nil? || category == "all"
-    @foods = foods[0..5]
-  else
-    @foods = foods.select { |food| food[:category] == category }
+  category = req.query["category_selected"]
+  price = req.query["price_selected"]
+  @foods = foods
+  if category && category != "all"
+    @foods = @foods.select { |food| food[:category] == category }
+  end
+  if price && price != "all"
+    @foods = @foods.select { |food| food[:price] == price }
   end
   res.body = template.result( binding )
 end
