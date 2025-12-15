@@ -76,12 +76,14 @@ server.mount_proc("/foods") do |req, res|
     @foods = @foods.select { |food| food[:category] == category }
   end
 
-  if pricemin && pricemin != "all"
-    @foods = @foods.select { |food| food[:price] >= pricemin }
+  if pricemin && !pricemin.empty?
+    pricemin_i = pricemin.to_i
+    @foods = @foods.select { |food| food[:price].to_i >= pricemin_i }
   end
 
-  if pricemax && pricemax != "all"
-    @foods = @foods.select { |food| food[:price] <= pricemax }
+  if pricemax && !pricemax.empty?
+    pricemax_i = pricemax.to_i
+    @foods = @foods.select { |food| food[:price].to_i <= pricemax_i }
   end
   res.body = template.result( binding )
 end
