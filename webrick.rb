@@ -21,6 +21,7 @@ require "erb" # erbをrequireする記述が必要
 # erb を使うにはこういった記述が必要。理解する必要はありません。このまま使いましょう。
 WEBrick::HTTPServlet::FileHandler.add_handler("erb", WEBrick::HTTPServlet::ERBHandler)
 server.config[:MimeTypes]["erb"] = "text/html"
+
 server.mount_proc("/hello") do |req, res|
   template = ERB.new( File.read('hello.erb') )
   # 現在時刻についてはインスタンス変数をここで定義してみるといいかも？
@@ -44,14 +45,44 @@ server.mount_proc("/form_post") do |req, res|
   res.body = template.result( binding )
 end
 
+# server.mount_proc("/foods") do |req, res|
+#   foods = req.query["foods"]
+#   if foods == "fruits"
+#     template = ERB.new( File.read('foods_fruits.erb') )
+#   elsif foods == "vegetables"
+#     template = ERB.new( File.read('foods_vegetables.erb') )
+#   else
+#     template = ERB.new( File.read('foods_all.erb') )
+#   end
+#   res.body = template.result( binding )
+# end
+
+foods = [
+  { id: 1, name: "りんご", category: "fruits", price: "124" },
+  { id: 2, name: "バナナ", category: "fruits", price: "98" },
+  { id: 3, name: "いちご", category: "fruits", price: "55" },
+  { id: 4, name: "トマト", category: "vegetables", price: "68" },
+  { id: 5, name: "キャベツ", category: "vegetables", price: "120" },
+  { id: 6, name: "レタス", category: "vegetables", price: "118" },
+]
+
 server.mount_proc("/foods") do |req, res|
-  foods = req.query["foods"]
-  if foods == "fruits"
-    template = ERB.new( File.read('foods_fruits.erb') )
-  elsif foods == "vegetables"
-    template = ERB.new( File.read('foods_vegetables.erb') )
+  template = ERB.new( File.read('foods/index.erb') )
+  category = req.query["category_select"]
+  price = req.query["price"]
+  # if category.nil?
+  #   @foods = foods[0..5]
+  # elsif category == fruits
+  #   @foods = foods[0..2]
+  # elsif category == vegetables
+  #   @foods = foods[3..5]
+  # elsif category == all
+  #   @foods = foods[0..5]
+  # end
+  if category.nil? || category == "all"
+    @foods = foods[0..5]
   else
-    template = ERB.new( File.read('foods_all.erb') )
+    @foods = foods.select { |food| food[:category] == category }
   end
   res.body = template.result( binding )
 end
